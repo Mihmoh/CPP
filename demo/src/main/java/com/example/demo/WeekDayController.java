@@ -18,45 +18,8 @@ public class WeekDayController {
     WeekDay greeting(@RequestParam(defaultValue = "2001") String year, @RequestParam(defaultValue = "1") String day)
     {
         String weekday = "Monday";
-
-        Integer year_int = Integer.valueOf(year);
-        Integer day_int = Integer.valueOf(day);
-        Integer days_at_all;
-        Integer rest;
-
-        if (day_int>365)
-        {
-            weekday = "Wrong day";
-            return new WeekDay(counter.incrementAndGet(), String.format(template, weekday));
-        }
-
-        days_at_all = year_int * 365 + day_int;
-        rest = days_at_all % 7;
-
-        switch(rest)
-        {
-            case 0:
-                weekday = "Monday";
-                break;
-            case 1:
-                weekday = "Tuesday";
-                break;
-            case 2:
-                weekday = "Wednesday";
-                break;
-            case 3:
-                weekday = "Thursday";
-                break;
-            case 4:
-                weekday = "Friday";
-                break;
-            case 5:
-                weekday = "Saturday";
-                break;
-            case 6:
-                weekday = "Sunday";
-                break;
-        }
+        WeekDayCounting a = new WeekDayCounting();
+        weekday = a.calculation(year, day);
 
         return new WeekDay(counter.incrementAndGet(), String.format(template, weekday));
     }
