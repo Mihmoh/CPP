@@ -2,17 +2,36 @@ package com.example.demo;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 
-class WeekDayControllerTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+public class WeekDayControllerTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     @Test
-    void request() {
-        String year = "2022";
-        String day = "1";
-        WeekDayCounting counting = new WeekDayCounting();
-        String actual = counting.calculation(year, day);
-        String expected = "Saturday";
-        assertEquals(expected, actual);
+    public void ReturnDefaultMessage() throws Exception {
+        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/weekday?year=2022&day=66",
+                String.class)).contains("Day \" 66 \" of \"2022\" year is Monday");
+    }
+    @Test
+    public void ReturnEmpty() throws Exception {
+        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/weekday?year=&day=",
+                String.class)).contains("Empty param sended");
+    }
+    @Test
+    public void ReturnBadWord() throws Exception {
+        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/weekdayy?year=&day=",
+                String.class)).contains("Bad name");
     }
 }

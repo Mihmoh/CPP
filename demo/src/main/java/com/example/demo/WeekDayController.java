@@ -1,24 +1,59 @@
 package com.example.demo;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.counter.RequestCounterThread;
+import com.example.demo.exception.DataRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @RestController
-
 public class WeekDayController {
+    private WeekDayCounting states;
+    private RequestCounterThread counterThread;
+    private Logger logger = LoggerFactory.getLogger(WeekDayController.class);
 
-    private static final String template = " %s!";      //строка, в которую помещается результат работы
-    private WeekDayCounting counting = new WeekDayCounting();       //объект, который обрабатывает входные параметры
+    @Autowired
+    public void setter(WeekDayCounting newService){
+        this.states = newService;
+    }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/weekday")      //берём параметры из url по /weekday
-    WeekDay request(@RequestParam(defaultValue = "2001") String year, @RequestParam(defaultValue = "1") String day)
-    {       //запрашиваемые параметры - это год и день, например http://localhost:8080/weekday?year=2022&day=64
-        String weekday = "Monday";
-        weekday = counting.calculation(year, day);      //обрабатываем полученные значения
+    private static final String template = "Day \" %s \" of \"%s\" year is %s";
+    private static final String template1 = "Day %s of %s year is %s\n";
 
-        return new WeekDay(String.format(template, weekday));       //возвращаем обработанное значение
+    @GetMapping("/weekday")
+    public String get(@RequestParam(value = "year") String year,
+                      @RequestParam(value = "day") String day)throws DataRequestException{
+        counterThread = new RequestCounterThread();
+        DataClass gr = new DataClass(year, day);
+        return String.format(template,gr.getDay(),gr.getYear(),states.calc(gr));
+    }
+    @PostMapping("/weekday")
+    public ResponseEntity<?> post1(@RequestBody List<DataClass> list){
+        List<String> res = new ArrayList<>();
+        List<Integer> resInt = new ArrayList<>();
+        List<String> res_output = new ArrayList<>();
+        list.forEach((element)->{
+            try {
+            res_output.add(String.format(template1,element.getYear(),element.getDay(),states.calc(element)));
+            resInt.add(states.calcInt(element));
+            res.add(states.calc(element));
+            } catch (Throwable e) {
+                logger.info("Argument is null (not fact)");
+            }
+        });
+
+        long sizeOfRequest = states.calcSize(res);
+        String offten = states.mostRecurring(res);
+        int MAX = states.findMax(resInt);
+        int MIN = states.findMin(resInt);
+        return new ResponseEntity<>(res_output + "\nSize = " + sizeOfRequest + "\nMax = "+MAX + "\nMin = "+ MIN+"\nOfften = "+ offten, HttpStatus.OK);
     }
 }
 

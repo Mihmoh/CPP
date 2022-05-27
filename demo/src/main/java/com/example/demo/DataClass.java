@@ -4,18 +4,19 @@ public class DataClass {
     private final String year;
     private final String day;
 
-    public DataClass(String year,String day){
+    public DataClass(String year, String day){
         this.year = year;
         this.day = day;
+    }
+
+    public String getDay() {
+        return day;
     }
 
     public String getYear() {
         return year;
     }
 
-    public String getDay() {
-        return day;
-    }
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
@@ -31,5 +32,4 @@ public class DataClass {
         res = 31*res + day.hashCode();
         return res;
     }
-
 }
