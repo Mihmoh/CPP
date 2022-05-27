@@ -5,22 +5,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 @RestController
 
 public class WeekDayController {
 
-    private static final String template = " %s!";
-    private final AtomicLong counter = new AtomicLong();
+    private static final String template = " %s!";      //строка, в которую помещается результат работы
+    private WeekDayCounting counting = new WeekDayCounting();       //объект, который обрабатывает входные параметры
 
-    @RequestMapping(method = RequestMethod.GET, path = "/weekday")
-    WeekDay greeting(@RequestParam(defaultValue = "2001") String year, @RequestParam(defaultValue = "1") String day)
-    {
+    @RequestMapping(method = RequestMethod.GET, path = "/weekday")      //берём параметры из url по /weekday
+    WeekDay request(@RequestParam(defaultValue = "2001") String year, @RequestParam(defaultValue = "1") String day)
+    {       //запрашиваемые параметры - это год и день, например http://localhost:8080/weekday?year=2022&day=64
         String weekday = "Monday";
-        WeekDayCounting a = new WeekDayCounting();
-        weekday = a.calculation(year, day);
+        weekday = counting.calculation(year, day);      //обрабатываем полученные значения
 
-        return new WeekDay(counter.incrementAndGet(), String.format(template, weekday));
+        return new WeekDay(String.format(template, weekday));       //возвращаем обработанное значение
     }
 }
+
