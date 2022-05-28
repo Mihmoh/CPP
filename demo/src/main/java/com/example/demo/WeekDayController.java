@@ -1,9 +1,10 @@
 package com.example.demo;
 
-import com.example.demo.counter.RequestCounterThread;
-import com.example.demo.exception.DataRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.example.demo.counter.RequestCounterThread;
+import com.example.demo.exception.DataRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,15 @@ public class WeekDayController {
     private static final String template = "Day \" %s \" of \"%s\" year is %s";
     private static final String template1 = "Day %s of %s year is %s\n";
 
+
     @GetMapping("/weekday")
     public String get(@RequestParam(value = "year") String year,
-                      @RequestParam(value = "day") String day)throws DataRequestException{
+                      @RequestParam(value = "day") String day) throws DataRequestException{
         counterThread = new RequestCounterThread();
         DataClass gr = new DataClass(year, day);
         return String.format(template,gr.getDay(),gr.getYear(),states.calc(gr));
     }
+
     @PostMapping("/weekday")
     public ResponseEntity<?> post1(@RequestBody List<DataClass> list){
         List<String> res = new ArrayList<>();

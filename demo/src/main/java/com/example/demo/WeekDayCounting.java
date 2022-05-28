@@ -94,11 +94,6 @@ public class WeekDayCounting
     public int calcInt(DataClass gr) {
         int rest = 0;
         String weekday = "Monday";
-        if(hashMap.isContain(gr)){
-            weekday = hashMap.getParam(gr);
-            logger.info("Get hashMap");
-        }
-        else {
 
             Integer year_int = Integer.valueOf(gr.getYear());
             Integer day_int = Integer.valueOf(gr.getDay());
@@ -146,15 +141,17 @@ public class WeekDayCounting
                 case 6:
                     weekday = "Sunday";
                     break;
-            }
+
         }
         return rest;
     }
 
     public long calcSize(List<String> resList){
-        long size =0;
+        long size = 0;
         if(!resList.isEmpty()){
-            size = resList.stream().count();
+            size = resList
+                    .stream()
+                    .count();
         }
         return size;
     }
@@ -178,14 +175,22 @@ public class WeekDayCounting
     public int findMax(List<Integer> resList){
         int max = 0;
         if(!resList.isEmpty()){
-            max = resList.stream().mapToInt(Integer::intValue).max().getAsInt();
+            max = resList
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .max()
+                    .getAsInt();
         }
         return max;
     }
     public int findMin(List<Integer> resList){
         int min = 0;
         if(!resList.isEmpty()){
-            min = resList.stream().mapToInt(Integer::intValue).min().getAsInt();
+            min = resList
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .min()
+                    .getAsInt();
         }
         return min;
     }

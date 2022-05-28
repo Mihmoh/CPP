@@ -31,7 +31,7 @@ public class WeekDayControllerTest {
     }
     @Test
     public void ReturnBadWord() throws Exception {
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/weekdayy?year=&day=",
+        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/weekday?yearr=&day=",
                 String.class)).contains("Bad name");
     }
 }
